@@ -15,6 +15,7 @@ BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	ruby > 1:2.3
 BuildRequires:	ruby-bundler
 BuildRequires:	ruby-devel
+BuildRequires:	ruby-io-console
 BuildRequires:	ruby-rubygems >= 2.6.9
 BuildRequires:	zlib-devel
 Requires:	git-core >= 2.13.6
