@@ -1,7 +1,7 @@
 Summary:	Stop relying on NFS for horizontal scaling. Speed up Git access using caching
 Name:		gitaly
 Version:	0.52.1
-Release:	1
+Release:	2
 License:	MIT
 Group:		Networking/Daemons/HTTP
 Source0:	https://gitlab.com/gitlab-org/gitaly/repository/archive.tar.bz2?ref=v%{version}&/%{name}-%{version}.tar.bz2
@@ -22,6 +22,8 @@ BuildRequires:	zlib-devel
 Requires:	git-core >= 2.13.6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define		_enable_debug_packages 0
+
 %description
 Gitaly is a Git RPC service for handling all the git calls made by
 GitLab.
@@ -31,9 +33,12 @@ GitLab.
 mv %{name}-v%{version}-*/* .
 
 %build
-# enable-gems to workaround
-RUBYOPT=--enable-gems \
-%{__make} \
+# gitaly-ruby is not packaged here (only the Go binaries ship); skip the
+# bundle install step, which additionally requires network access.
+touch .ruby-bundle
+
+export GO111MODULE=off
+%{__make} build \
 	VERSION=%{version}
 
 # verify
@@ -42,6 +47,7 @@ grep "%{version}" v
 
 %install
 rm -rf $RPM_BUILD_ROOT
+export GO111MODULE=off
 %{__make} install \
 	PREFIX=%{_prefix} \
 	DESTDIR=$RPM_BUILD_ROOT
